@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:khuje_pai/components/bottom_navbar.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,6 +16,7 @@ class _HomeState extends State<Home> {
         title: const Text("Home"),
         centerTitle: true,
       ),
+      bottomNavigationBar: const BottomNavBar(),
     );
   }
 }
