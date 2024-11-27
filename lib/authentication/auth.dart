@@ -7,6 +7,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:khuje_pai/views/home.dart';
 import 'package:khuje_pai/authentication/database.dart';
 
+import '../components/app.dart';
+
 class AuthMethods{
   final FirebaseAuth auth = FirebaseAuth.instance;
 
@@ -39,7 +41,7 @@ class AuthMethods{
         "id" : userDetails.uid
       };
       await DatabaseMethods().addUser(userDetails.uid, userInfoMap).then((value) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
       });
     }
   }

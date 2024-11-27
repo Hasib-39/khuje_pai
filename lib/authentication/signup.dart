@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:khuje_pai/views/home.dart';
 import 'package:khuje_pai/authentication/login.dart';
 
+import '../components/app.dart';
+
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
@@ -31,7 +33,7 @@ class _SignupState extends State<Signup> {
               ),
             )
             ));
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
       } on FirebaseAuthException catch(e){
         if(e.code == 'weak-pasword'){
           ScaffoldMessenger.of(context).showSnackBar(

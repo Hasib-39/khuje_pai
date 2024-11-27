@@ -5,6 +5,8 @@ import 'package:khuje_pai/views/home.dart';
 import 'package:khuje_pai/authentication/auth.dart';
 import 'package:khuje_pai/authentication/signup.dart';
 
+import '../components/app.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -22,7 +24,7 @@ class _LoginState extends State<Login> {
   userLogin() async {
     try{
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
     } on FirebaseAuthException catch (e){
       if(e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(
