@@ -32,8 +32,9 @@ class _AppState extends State<App> {
         setState(() => selected_index = index),
         destinations: const [
           NavigationDestination(
-            icon: Icon(CupertinoIcons.house_fill, ),
+            icon: Icon(CupertinoIcons.house_fill,),
             label: 'Home',
+
           ),
           NavigationDestination(
             icon: Icon(CupertinoIcons.clear_circled_solid),
