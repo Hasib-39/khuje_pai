@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:khuje_pai/user_model.dart';
 import 'package:khuje_pai/views/home.dart';
 import 'package:khuje_pai/authentication/database.dart';
 
@@ -11,7 +12,6 @@ import '../components/app.dart';
 
 class AuthMethods{
   final FirebaseAuth auth = FirebaseAuth.instance;
-
   getCurrentUser() async {
     return await auth.currentUser;
   }
@@ -34,15 +34,15 @@ class AuthMethods{
     User? userDetails = result.user;
 
     if(result != null){
-      Map<String, dynamic> userInfoMap = {
-        "email": userDetails?.email,
-        "name": userDetails?.displayName,
-        "imgUrl": userDetails?.photoURL ?? "",
-        "description" : "",
-        "phone" : "",
-        "id": userDetails?.uid
-      };
-      await DatabaseMethods().addUser(userDetails!.uid, userInfoMap).then((value) {
+      UserModel userModel = UserModel(
+          email: userDetails?.email?.trim(),
+          name: userDetails?.displayName?.trim(),
+          imgUrl: userDetails?.photoURL ?? "",
+          description: "",
+          phone: "",
+          id: userDetails?.uid
+      );
+      await DatabaseMethods().addUser(userDetails!.uid, userModel.toJson()).then((value) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
       });
     }

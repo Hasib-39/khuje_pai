@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:khuje_pai/user_model.dart';
 import 'package:khuje_pai/views/home.dart';
 import 'package:khuje_pai/views/lost.dart';
 import 'package:khuje_pai/views/found.dart';
@@ -7,12 +9,12 @@ import 'package:khuje_pai/views/profile.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
-
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
+  User? user = FirebaseAuth.instance.currentUser;
   int selected_index = 0;
   final _pages = [
     const Home(),
