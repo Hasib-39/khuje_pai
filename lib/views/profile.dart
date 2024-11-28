@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -64,8 +66,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                               // Set shape to rectangle
                                               // 50% border radius makes it circular
                                               image: DecorationImage(
-                                                image: userDoc['imgUrl'] == "" ? AssetImage("images/default_profile.png") : NetworkImage(userDoc['imgUrl']),
-                                                fit: BoxFit.contain, // Ensures the image is contained within the box
+                                                image: provider.image == null
+                                                    ? userDoc['imgUrl'] == ""
+                                                    ? const AssetImage("images/default_profile.png")
+                                                    : NetworkImage(userDoc['imgUrl']) as ImageProvider
+                                                    : FileImage(File(provider.image!.path).absolute),
+
+                                                    fit: BoxFit.contain, // Ensures the image is contained within the box
                                               ),
                                             ),
                                           ),
