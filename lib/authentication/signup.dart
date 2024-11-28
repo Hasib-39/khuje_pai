@@ -1,6 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:khuje_pai/views/home.dart';
 import 'package:khuje_pai/authentication/login.dart';
 
 import '../components/app.dart';
@@ -24,16 +24,27 @@ class _SignupState extends State<Signup> {
     if(password != "" && namecontroller.text != "" && mailcontroller.text!=""){
       try{
         UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text(
-              "Registered Successfully",
-              style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: 'Inter'
-              ),
-            )
-            ));
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
+        User? userDetails = userCredential.user;
+        if(userDetails != null) {
+          Map<String, dynamic> userInfoMap = {
+            "email": userDetails.email,
+            "name": namecontroller.text,
+            "imgUrl": userDetails.photoURL ?? "",
+            "phone" : "",
+            "id": userDetails.uid
+          };
+          FirebaseFirestore.instance.collection("User").add(userInfoMap);
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text(
+                "Registered Successfully",
+                style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Inter'
+                ),
+              )
+              ));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
+        }
       } on FirebaseAuthException catch(e){
         if(e.code == 'weak-pasword'){
           ScaffoldMessenger.of(context).showSnackBar(
