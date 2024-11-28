@@ -96,6 +96,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ListTile(
                                     title: const Text("Name"),
                                     subtitle: Text(userDoc['name'] ?? 'N/A'),
+                                    onTap: (){
+                                      provider.showUsernameDialog(context);
+                                    },
                                   ),
                                   ListTile(
                                     title: const Text("Email"),
@@ -104,10 +107,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ListTile(
                                     title: const Text("Phone"),
                                     subtitle: Text(userDoc['phone'] ?? 'N/A'),
+                                    onTap: (){
+                                      provider.showPhoneDialog(context);
+                                    },
                                   ),
                                   ListTile(
                                     title: const Text("Description"),
                                     subtitle: Text(userDoc['description'] ?? 'N/A'),
+                                    onTap: (){
+                                      provider.showDescriptionDialog(context);
+                                    },
                                   ),
                                 ],
                               ),

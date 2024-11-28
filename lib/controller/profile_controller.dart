@@ -12,7 +12,9 @@ class ProfileController with ChangeNotifier{
   XFile? _image;
   XFile? get image => _image;
   String imageURL = "";
-
+  String name = "";
+  String phone = "";
+  String description = "";
   Future pickGalleryImage(BuildContext context) async{
     final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
 
@@ -99,7 +101,7 @@ class ProfileController with ChangeNotifier{
             TextButton(
               onPressed: () {
                   imageURL = urlController.text;
-                  changeImageUrl(imageURL);// Save input to the variable
+                  changeData(imageURL, "imgUrl");// Save input to the variable
                 Navigator.pop(context); // Close dialog
               },
               child: const Text("Save"),
@@ -109,7 +111,112 @@ class ProfileController with ChangeNotifier{
       },
     );
   }
-  void changeImageUrl(String newImageUrl) async {
+  void showUsernameDialog(BuildContext context) {
+    final TextEditingController urlController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Enter Name"),
+          content: TextField(
+            controller: urlController,
+            decoration: const InputDecoration(
+              hintText: "Name",
+            ),
+            keyboardType: TextInputType.url,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog without saving
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                name = urlController.text;
+                changeData(name, "name");// Save input to the variable
+                Navigator.pop(context); // Close dialog
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void showPhoneDialog(BuildContext context) {
+    final TextEditingController urlController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Enter Phone No"),
+          content: TextField(
+            controller: urlController,
+            decoration: const InputDecoration(
+              hintText: "Phone No",
+            ),
+            keyboardType: TextInputType.url,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog without saving
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                phone = urlController.text;
+                changeData(phone, "phone");// Save input to the variable
+                Navigator.pop(context); // Close dialog
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void showDescriptionDialog(BuildContext context) {
+    final TextEditingController urlController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Enter Description"),
+          content: TextField(
+            controller: urlController,
+            decoration: const InputDecoration(
+              hintText: "Description",
+            ),
+            keyboardType: TextInputType.url,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog without saving
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                description = urlController.text;
+                changeData(description, "description");// Save input to the variable
+                Navigator.pop(context); // Close dialog
+              },
+              child: const Text("Save"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+  void changeData(String value, String doc) async {
     try {
       // Fetch the user document
       QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
@@ -125,7 +232,7 @@ class ProfileController with ChangeNotifier{
         await FirebaseFirestore.instance
             .collection("User")
             .doc(userDoc.id) // Use the document ID to perform the update
-            .update({"imgUrl": newImageUrl});
+            .update({doc: value});
 
         debugPrint("Image URL updated successfully!");
       } else {
