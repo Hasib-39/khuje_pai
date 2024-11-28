@@ -40,6 +40,8 @@ dependencies:
   google_sign_in: ^6.2.2
   cloud_firestore: ^5.4.5
   the_apple_sign_in: ^1.1.1
+  image_picker: ^1.1.2
+  provider: ^6.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
