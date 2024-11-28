@@ -35,12 +35,14 @@ class AuthMethods{
 
     if(result != null){
       Map<String, dynamic> userInfoMap = {
-        "email" : userDetails!.email,
-        "name" : userDetails.displayName,
-        "imgUrl" : userDetails.photoURL,
-        "id" : userDetails.uid
+        "email": userDetails?.email,
+        "name": userDetails?.displayName,
+        "imgUrl": userDetails?.photoURL ?? "",
+        "description" : "",
+        "phone" : "",
+        "id": userDetails?.uid
       };
-      await DatabaseMethods().addUser(userDetails.uid, userInfoMap).then((value) {
+      await DatabaseMethods().addUser(userDetails!.uid, userInfoMap).then((value) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
       });
     }

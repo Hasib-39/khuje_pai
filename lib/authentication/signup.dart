@@ -30,6 +30,7 @@ class _SignupState extends State<Signup> {
             "email": userDetails.email,
             "name": namecontroller.text,
             "imgUrl": userDetails.photoURL ?? "",
+            "description" : "",
             "phone" : "",
             "id": userDetails.uid
           };
