@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "319311076403",
-    "project_id": "khuje-pai",
-    "storage_bucket": "khuje-pai.firebasestorage.app"
+    "project_number": "638315769956",
+    "project_id": "khuje-pai-df948",
+    "storage_bucket": "khuje-pai-df948.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:319311076403:android:1b6582cf4c6718e58a5746",
+        "mobilesdk_app_id": "1:638315769956:android:8b2701af894f0704ee2f71",
         "android_client_info": {
-          "package_name": "com.hasib.khuje_pai"
+          "package_name": "com.hasib39.khuje_pai"
         }
       },
       "oauth_client": [
         {
-          "client_id": "319311076403-svs0rbq7po7daehq4bl8hm705ktrdqe9.apps.googleusercontent.com",
+          "client_id": "638315769956-s5cso96fh5bk4lkjbgrjbi3vgg79uoi3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.hasib.khuje_pai",
+            "package_name": "com.hasib39.khuje_pai",
             "certificate_hash": "9ada300d1fa9053100ac534a3b3bb4aad5325da1"
           }
         },
         {
-          "client_id": "319311076403-bgj3tmmmqrbc6odl11j7chped57amdjj.apps.googleusercontent.com",
+          "client_id": "638315769956-qvrjoivgtulg8vmc3mt0el0h6087gecr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDrtCzAuZm0nkd4V_Xzg20LDP9gbHB-d4w"
+          "current_key": "AIzaSyBE6Sdh2FZn5F3MgqIHn531iVcOMruJkFM"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "319311076403-bgj3tmmmqrbc6odl11j7chped57amdjj.apps.googleusercontent.com",
+              "client_id": "638315769956-qvrjoivgtulg8vmc3mt0el0h6087gecr.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

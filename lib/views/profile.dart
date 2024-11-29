@@ -61,8 +61,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                           child: Container(
                                             width: 140, // Size of the image (matching CircleAvatar's radius * 2)
                                             height: 140,
+                                            padding: const EdgeInsets.all(2),
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
+                                              border: Border.all(
+                                                width: 4,
+                                                color: Colors.black,
+                                              ),
                                               // Set shape to rectangle
                                               // 50% border radius makes it circular
                                               image: DecorationImage(
@@ -81,11 +86,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                           onTap: (){
                                             provider.pickImage(context);
                                           },
-                                          child: const CircleAvatar(
-                                            radius: 14,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(2),
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle
+                                            ),
+                                            child: const CircleAvatar(
+                                              radius: 14,
 
-                                            backgroundColor: Colors.black,
-                                            child: Icon(Icons.add, size: 20, color: Colors.white,),
+                                              backgroundColor: Colors.black,
+                                              child: Icon(Icons.add, size: 20, color: Colors.white,),
+                                            ),
                                           ),
                                         )
                                       ]

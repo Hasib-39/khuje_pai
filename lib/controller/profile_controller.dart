@@ -1,25 +1,33 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class ProfileController with ChangeNotifier{
   CollectionReference ref = FirebaseFirestore.instance.collection('User');
   User? user = FirebaseAuth.instance.currentUser;
 
   final picker = ImagePicker();
-  XFile? _image;
-  XFile? get image => _image;
+  File? _image;
+  File? get image => _image;
   String imageURL = "";
   String name = "";
   String phone = "";
   String description = "";
+  
   Future pickGalleryImage(BuildContext context) async{
     final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
 
     if(pickedFile != null){
-      _image = XFile(pickedFile.path);
+      _image = File(pickedFile.path);
+      uploadImage(_image!);
       notifyListeners();
     }
   }
@@ -28,7 +36,8 @@ class ProfileController with ChangeNotifier{
     final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 100);
 
     if(pickedFile != null){
-      _image = XFile(pickedFile.path);
+      _image = File(pickedFile.path);
+      uploadImage(_image!);
       notifyListeners();
     }
   }
@@ -243,7 +252,37 @@ class ProfileController with ChangeNotifier{
     }
   }
 
-  void uploadImage(){
+  Future<void> uploadImage(File image) async {
+    File? file = image;
+    String cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
+    var uri = Uri.parse("https://api.cloudinary.com/v1_1/$cloudName/raw/upload");
+    var request = http.MultipartRequest("POST", uri);
+    var fileBytes = await file.readAsBytes();
+    var multipartFile = http.MultipartFile.fromBytes(
+      'file',
+      fileBytes,
+      filename: file.path.split("/").last,
+    );
 
+    request.files.add(multipartFile);
+    request.fields['upload_preset'] = "preset-for-file-upload";
+    request.fields['resource_type'] = "raw";
+    var response = await request.send();
+
+    var responseBody = await response.stream.bytesToString();
+    print(responseBody);
+    var jsonResponse = jsonDecode(responseBody);
+    String imgUrl = jsonResponse["secure_url"];
+
+    if(response.statusCode == 200){
+      print("Uploaded succesfully");
+      changeData(imgUrl, "imgUrl");
+      return;
+    }else{
+      print("Uploaded failed with status: ${response.statusCode}");
+      return;
+    }
   }
+
+
 }
