@@ -70,7 +70,7 @@ class _LoginState extends State<Login> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 child: Image.asset(
-                  "images/nature.png",
+                  "images/lost_and_found.png",
                   fit: BoxFit.cover,
                   height: MediaQuery.of(context).size.height * 0.38,
                 ),
@@ -152,15 +152,15 @@ class _LoginState extends State<Login> {
                               width: MediaQuery.of(context).size.width,
                               padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 30),
                               decoration: BoxDecoration(
-                                  color: const Color(0xff073727),
+                                  color: Color(0xffff9d14),
                                   borderRadius: BorderRadius.circular(30)
                               ),
                               child: const Center(
                                 child: Text(
-                                  "Sign In",
+                                  "Log In",
                                   style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 22,
+                                      fontSize: 24,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: 'Inter'
                                   ),
@@ -193,7 +193,7 @@ class _LoginState extends State<Login> {
               const Text(
                 "or Login with",
                 style: TextStyle(
-                    color: Color(0xff073727),
+                    color: Colors.black,
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Inter'
@@ -251,7 +251,7 @@ class _LoginState extends State<Login> {
                     child: const Text(
                       "SignUp",
                       style: TextStyle(
-                          color: Color(0xff073727),
+                          color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Inter'

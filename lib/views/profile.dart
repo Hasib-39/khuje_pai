@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:khuje_pai/controller/profile_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,16 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
+        title: Text(
+            'Profile',
+          style: GoogleFonts.poppins(
+            fontSize: 25, // Set the font size
+            fontWeight: FontWeight.bold,
+            // Set the font weight
+          ),
+        ),
       ),
       body: ChangeNotifierProvider(
           create: (_) => ProfileController(),
@@ -102,33 +112,175 @@ class _ProfilePageState extends State<ProfilePage> {
                                         )
                                       ]
                                   ),
-                                  const SizedBox(height: 32),
-
+                                  const SizedBox(height: 24),
                                   // Displaying user fields in a list manner
-                                  ListTile(
-                                    title: const Text("Name"),
-                                    subtitle: Text(userDoc['name'] ?? 'N/A'),
-                                    onTap: (){
-                                      provider.showUsernameDialog(context);
-                                    },
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                          "Personal Information",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 22, // Set the font size
+                                          fontWeight: FontWeight.bold, // Set the font weight
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                  ListTile(
-                                    title: const Text("Email"),
-                                    subtitle: Text(userDoc['email'] ?? 'N/A'),
+
+                                  const Divider(thickness: 2,),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                          child: Text(
+                                              "Name",
+                                            style: GoogleFonts.inter(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey.shade500
+                                            ),
+                                          ),
+                                        flex: 3,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                      userDoc['name'] ?? 'N/A',
+                                          style: GoogleFonts.inter(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black
+                                          ),
+                                        ),
+                                        flex: 8,
+                                      ),
+                                      Expanded(
+                                          child: GestureDetector(
+                                            onTap: (){
+                                              provider.showUsernameDialog(context);
+                                            },
+                                            child: Icon(
+                                                Icons.arrow_forward_ios,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          )
+                                      )
+                                    ],
                                   ),
-                                  ListTile(
-                                    title: const Text("Phone"),
-                                    subtitle: Text(userDoc['phone'] ?? 'N/A'),
-                                    onTap: (){
-                                      provider.showPhoneDialog(context);
-                                    },
+                                  const SizedBox(height: 26),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "Email",
+                                          style: GoogleFonts.inter(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey.shade500
+                                          ),
+                                        ),
+                                        flex: 3,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          userDoc['email'] ?? 'N/A',
+                                          style: GoogleFonts.inter(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black
+                                          ),
+                                        ),
+                                        flex: 8,
+                                      ),
+                                      Expanded(
+                                          child: Icon(
+                                            Icons.arrow_forward_ios,
+                                            color: Colors.grey.shade400,
+                                          )
+                                      )
+                                    ],
                                   ),
-                                  ListTile(
-                                    title: const Text("Description"),
-                                    subtitle: Text(userDoc['description'] ?? 'N/A'),
-                                    onTap: (){
-                                      provider.showDescriptionDialog(context);
-                                    },
+                                  const SizedBox(height: 26),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "Phone",
+                                          style: GoogleFonts.inter(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey.shade500
+                                          ),
+                                        ),
+                                        flex: 3,
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          userDoc['phone'] ?? 'N/A',
+                                          style: GoogleFonts.inter(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black
+                                          ),
+                                        ),
+                                        flex: 8,
+                                      ),
+                                      Expanded(
+                                          child: GestureDetector(
+                                            onTap: (){
+                                              provider.showPhoneDialog(context);
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          )
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 26),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          "Description",
+                                          style: GoogleFonts.inter(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.grey.shade500
+                                          ),
+                                        ),
+                                        flex: 3,
+                                      ),
+                                      Expanded(
+                                          child: GestureDetector(
+                                            onTap: (){
+                                              provider.showDescriptionDialog(context);
+                                            },
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: Colors.grey.shade400,
+                                            ),
+                                          ),
+                                        flex: -1,
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          userDoc['description'] ?? 'N/A',
+                                          style: GoogleFonts.inter(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black
+                                          ),
+                                        ),
+                                        flex: 8,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),

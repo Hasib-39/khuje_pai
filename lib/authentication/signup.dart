@@ -126,7 +126,7 @@ class _SignupState extends State<Signup> {
               Container(
                 width: MediaQuery.of(context).size.width,
                 child: Image.asset(
-                  "images/nature.png",
+                  "images/lost_and_found.png",
                   fit: BoxFit.cover,
                   height: MediaQuery.of(context).size.height * 0.35,
                 ),
@@ -232,7 +232,7 @@ class _SignupState extends State<Signup> {
                           width: MediaQuery.of(context).size.width,
                           padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 30),
                           decoration: BoxDecoration(
-                              color: const Color(0xff073727),
+                              color: const Color(0xffff9d14),
                               borderRadius: BorderRadius.circular(30)
                           ),
                           child: const Center(
@@ -256,7 +256,7 @@ class _SignupState extends State<Signup> {
               const Text(
                 "or Login with",
                 style: TextStyle(
-                    color: Color(0xff073727),
+                    color: Colors.black,
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Inter'
@@ -304,7 +304,7 @@ class _SignupState extends State<Signup> {
                     child: const Text(
                       "Login",
                       style: TextStyle(
-                          color: Color(0xff073727),
+                          color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           fontFamily: 'Inter'
