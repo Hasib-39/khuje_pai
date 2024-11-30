@@ -2,10 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:khuje_pai/user_model.dart';
 import 'package:khuje_pai/views/home.dart';
-import 'package:khuje_pai/views/lost.dart';
-import 'package:khuje_pai/views/found.dart';
+import 'package:khuje_pai/views/search.dart';
+import 'package:khuje_pai/views/create.dart';
 import 'package:khuje_pai/views/profile.dart';
 
 class App extends StatefulWidget {
@@ -21,8 +20,8 @@ class _AppState extends State<App> {
 
   final List<Widget> _pages = [
     const Home(),
-    const LostPage(),
-    const FoundPage(),
+    const SearchPage(),
+    const CreatePage(),
     const ProfilePage(),
   ];
 
@@ -68,12 +67,12 @@ class _AppState extends State<App> {
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(CupertinoIcons.clear_circled_solid),
-              label: 'Lost',
+              icon: Icon(CupertinoIcons.search),
+              label: 'Search',
             ),
             NavigationDestination(
-              icon: Icon(CupertinoIcons.check_mark_circled_solid),
-              label: 'Found',
+              icon: Icon(CupertinoIcons.plus_square_fill_on_square_fill),
+              label: 'Create',
             ),
             NavigationDestination(
               icon: Icon(CupertinoIcons.person_crop_square_fill),

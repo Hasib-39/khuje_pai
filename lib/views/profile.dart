@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:khuje_pai/authentication/login.dart';
 import 'package:khuje_pai/controller/profile_controller.dart';
 import 'package:provider/provider.dart';
 
@@ -97,6 +98,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             provider.pickImage(context);
                                           },
                                           child: Container(
+
                                             padding: const EdgeInsets.all(2),
                                             decoration: const BoxDecoration(
                                               color: Colors.white,
@@ -126,7 +128,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                       )
                                     ],
                                   ),
-
                                   const Divider(thickness: 2,),
                                   const SizedBox(height: 16),
                                   Row(
@@ -282,6 +283,36 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                     ],
                                   ),
+                                  const SizedBox(height: 26),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: (){
+                                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const Login()));
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context).size.width*0.4,
+                                          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 30),
+                                          decoration: BoxDecoration(
+                                              color: Color(0xffcd040a),
+                                              borderRadius: BorderRadius.circular(30)
+                                          ),
+                                          child: const Center(
+                                            child: Text(
+                                              "Log Out",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Inter'
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  )
                                 ],
                               ),
                             );
