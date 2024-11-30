@@ -33,8 +33,9 @@ class CreatePage extends StatelessWidget {
                   onPressed: () async {
                     try {
                       final userId = FirebaseAuth.instance.currentUser?.uid;
-                      if (userId != null) {
-                        await provider.addPost(userId);
+                      if (userId != null || provider.image == null) {
+                        await provider.uploadImage(provider.image!);
+                        await provider.addPost(userId!);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Post added successfully!")),
                         );

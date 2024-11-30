@@ -1,11 +1,14 @@
 
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class CreateController with ChangeNotifier{
   final picker = ImagePicker();
@@ -14,6 +17,7 @@ class CreateController with ChangeNotifier{
   File? _image;
   File? get image => _image;
   String imageURL = "";
+
 
   Future pickGalleryImage(BuildContext context) async{
     final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
@@ -127,6 +131,38 @@ class CreateController with ChangeNotifier{
     } catch(e){
       print("Error adding post: $e");
       throw e;
+    }
+  }
+  Future<void> uploadImage(File image) async {
+    File? file = image;
+    String cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
+    var uri = Uri.parse("https://api.cloudinary.com/v1_1/$cloudName/raw/upload");
+    var request = http.MultipartRequest("POST", uri);
+    var fileBytes = await file.readAsBytes();
+    var multipartFile = http.MultipartFile.fromBytes(
+      'file',
+      fileBytes,
+      filename: file.path.split("/").last,
+    );
+
+    request.files.add(multipartFile);
+    request.fields['upload_preset'] = "preset-for-post-img-upload";
+    request.fields['resource_type'] = "raw";
+    var response = await request.send();
+
+    var responseBody = await response.stream.bytesToString();
+    print(responseBody);
+    var jsonResponse = jsonDecode(responseBody);
+    String imgUrl = jsonResponse["secure_url"];
+
+    if(response.statusCode == 200){
+      print("Uploaded succesfully");
+      imageURL = imgUrl;
+      // changeData(imgUrl, "imgUrl");
+      return;
+    }else{
+      print("Uploaded failed with status: ${response.statusCode}");
+      return;
     }
   }
 }
