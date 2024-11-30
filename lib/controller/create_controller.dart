@@ -2,12 +2,15 @@
 
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateController with ChangeNotifier{
   final picker = ImagePicker();
+  String? caption;
+  String? location;
   File? _image;
   File? get image => _image;
   String imageURL = "";
@@ -21,7 +24,6 @@ class CreateController with ChangeNotifier{
       notifyListeners();
     }
   }
-
   Future pickCameraImage(BuildContext context) async{
     final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 100);
 
@@ -31,8 +33,6 @@ class CreateController with ChangeNotifier{
       notifyListeners();
     }
   }
-
-
   void pickImage(context){
     showDialog(
         context: context,
@@ -109,5 +109,24 @@ class CreateController with ChangeNotifier{
         );
       },
     );
+  }
+  Future<void> addPost(String userID) async {
+    if(caption == null || location == null || imageURL == ""){
+      throw Exception("All fields are required");
+    }
+
+    try{
+      await FirebaseFirestore.instance.collection("Post").add({
+        'user_id': userID,
+        'caption' : caption,
+        'location' : location,
+        'imgUrl' : imageURL,
+        'createdAt': FieldValue.serverTimestamp()
+      });
+      notifyListeners();
+    } catch(e){
+      print("Error adding post: $e");
+      throw e;
+    }
   }
 }
