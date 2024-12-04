@@ -106,7 +106,7 @@ class _MyPostsPageState extends State<MyPostsPage> {
                 itemBuilder: (context, index) {
                   final postData = filteredPosts[index].data() as Map<String, dynamic>;
                   Post post = Post.fromJson(postData);
-                  return PostTile(post: post);
+                  return PostTile(post: post, delete_option: true,);
                 },
               );
             } else {

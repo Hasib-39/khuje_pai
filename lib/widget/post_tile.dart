@@ -2,14 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:khuje_pai/components/post.dart';
-import 'package:khuje_pai/user_model.dart';
-import 'package:khuje_pai/views/profile.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import '../components/post.dart';
+import '../user_model.dart';
+import '../views/profile.dart';
 
 class PostTile extends StatefulWidget {
-  const PostTile({super.key, required this.post});
+  const PostTile({super.key, required this.post, this.delete_option = false});
   final Post post;
+  final bool delete_option;
 
   @override
   State<PostTile> createState() => _PostTileState();
@@ -24,13 +25,12 @@ class _PostTileState extends State<PostTile> {
   @override
   void initState() {
     super.initState();
-    fetchUserData(); // Fetch user data when the widget is initialized
+    fetchUserData();
     likeCount = widget.post.likeCnt;
   }
 
   Future<UserModel?> fetchUserData() async {
     try {
-      // Query User collection where userId matches
       QuerySnapshot userSnapshot = await FirebaseFirestore.instance
           .collection("User")
           .where("id", isEqualTo: widget.post.userId)
@@ -53,16 +53,13 @@ class _PostTileState extends State<PostTile> {
     });
 
     try {
-      // Update like count in Firebase
       await FirebaseFirestore.instance
           .collection("Post")
-          .doc(widget.post.id) // Ensure this is the correct post document ID
+          .doc(widget.post.id)
           .update({
         "like_cnt": likeCount,
       });
     } catch (e) {
-      print("Error updating like count: $e");
-      // Revert state on failure
       setState(() {
         isLiked = !isLiked;
         likeCount = isLiked ? likeCount + 1 : likeCount - 1;
@@ -70,13 +67,29 @@ class _PostTileState extends State<PostTile> {
     }
   }
 
+  Future<void> deletePost() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("Post")
+          .doc(widget.post.id)
+          .delete();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Post deleted successfully!")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to delete the post!")),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<UserModel?>(
-      future: fetchUserData(), // Fetch user data asynchronously
+      future: fetchUserData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Show loading indicator while data is being fetched
           return const Center(child: Text(""));
         }
 
@@ -88,7 +101,6 @@ class _PostTileState extends State<PostTile> {
           return const Center(child: Text("User data not found"));
         }
 
-        // User data has been fetched, use the data to display UI
         UserModel user = snapshot.data!;
 
         return Card(
@@ -99,59 +111,90 @@ class _PostTileState extends State<PostTile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Display user info (image and name)
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        // Navigate to the ProfilePage when image is clicked
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfilePage(profileUser: user),
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfilePage(profileUser: user),
+                              ),
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 20,
+                            backgroundImage: user.imgUrl != null
+                                ? NetworkImage(user.imgUrl!)
+                                : const AssetImage("images/default_profile.png")
+                            as ImageProvider,
+                            backgroundColor: Colors.grey.shade300,
                           ),
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 20,
-                        backgroundImage: user.imgUrl != null
-                            ? NetworkImage(user.imgUrl!)
-                            : const AssetImage("images/default_profile.png") as ImageProvider,
-                        backgroundColor: Colors.grey.shade300,
-                      ),
+                        ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProfilePage(profileUser: user),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user.name ?? "Loading...",
+                                style: GoogleFonts.inter(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                "${widget.post.location} . ${timeago.format(widget.post.createdAt.toDate().toLocal())}",
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigate to the ProfilePage when name is clicked
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfilePage(profileUser: user),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            user.name ?? "Loading...",
-                            style: GoogleFonts.inter(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                    if (widget.delete_option)
+                      IconButton(
+                        icon: const Icon(Icons.more_vert),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Delete Post"),
+                              content: const Text(
+                                  "Are you sure you want to delete this post?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                    await deletePost();
+                                  },
+                                  child: const Text("Delete"),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "${widget.post.location} . ${timeago.format(widget.post.createdAt.toDate().toLocal())}",
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-
-                        ],
+                          );
+                        },
                       ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -171,7 +214,6 @@ class _PostTileState extends State<PostTile> {
                 )
                     : const SizedBox.shrink(),
                 const SizedBox(height: 10),
-                // Display post stats with icons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -194,7 +236,8 @@ class _PostTileState extends State<PostTile> {
                     ),
                     Row(
                       children: [
-                        const Icon(FontAwesomeIcons.solidComment, color: Colors.black, size: 20),
+                        const Icon(FontAwesomeIcons.solidComment,
+                            color: Colors.black, size: 20),
                         const SizedBox(width: 5),
                         Text(
                           "${widget.post.commentCnt}",
@@ -211,17 +254,6 @@ class _PostTileState extends State<PostTile> {
                           style: const TextStyle(fontSize: 14),
                         ),
                       ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                // Display post location and timestamp
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      timeago.format(widget.post.createdAt.toDate().toLocal()),
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
