@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:khuje_pai/views/home.dart';
-import 'package:khuje_pai/views/search.dart';
+import 'package:khuje_pai/views/my_posts.dart';
 import 'package:khuje_pai/views/create.dart';
 import 'package:khuje_pai/views/profile.dart';
 
@@ -41,6 +40,7 @@ class _AppState extends State<App> {
     final List<Widget> pages = [
       const Home(),
       const CreatePage(),
+      const MyPostsPage(),
       ProfilePage(profileUser: convertFirebaseUserToUserModel(user)),
     ];
 
@@ -86,6 +86,10 @@ class _AppState extends State<App> {
             NavigationDestination(
               icon: Icon(CupertinoIcons.plus_square_fill_on_square_fill),
               label: 'Create',
+            ),
+            NavigationDestination(
+                icon: Icon(Icons.collections_bookmark),
+                label: 'My Posts'
             ),
             NavigationDestination(
               icon: Icon(CupertinoIcons.person_crop_square_fill),
