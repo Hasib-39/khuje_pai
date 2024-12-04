@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:khuje_pai/views/home.dart';
 import 'package:khuje_pai/views/search.dart';
 import 'package:khuje_pai/views/create.dart';
 import 'package:khuje_pai/views/profile.dart';
+
+import '../user_model.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -16,19 +19,33 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   User? user = FirebaseAuth.instance.currentUser;
+
   int selectedIndex = 0;
 
-  final List<Widget> _pages = [
-    const Home(),
-    const SearchPage(),
-    const CreatePage(),
-    const ProfilePage(),
-  ];
+  UserModel? convertFirebaseUserToUserModel(User? user) {
+    if (user != null) {
+      return UserModel(
+        email: user.email ?? '',
+        name: user.displayName ?? '',
+        imgUrl: user.photoURL ?? '',
+        description: '',
+        phone: user.phoneNumber ?? '',
+        id: user.uid,
+      );
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const Home(),
+      const CreatePage(),
+      ProfilePage(profileUser: convertFirebaseUserToUserModel(user)),
+    ];
+
     return Scaffold(
-      body: _pages[selectedIndex],
+      body: pages[selectedIndex],
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           backgroundColor: Colors.black,
@@ -38,7 +55,7 @@ class _AppState extends State<App> {
               if (states.contains(WidgetState.selected)) {
                 return GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
-                  color: Color(0xffe0746e)
+                  color: const Color(0xffe0746e)
                   // Set the font weight
                 );
               }
@@ -53,7 +70,7 @@ class _AppState extends State<App> {
               if (states.contains(WidgetState.selected)) {
                 return const IconThemeData(color: Color(0xffe0746e));
               }
-              return IconThemeData(color: Colors.white);
+              return const IconThemeData(color: Colors.white);
             },
           ),
         ),
@@ -65,10 +82,6 @@ class _AppState extends State<App> {
             NavigationDestination(
               icon: Icon(CupertinoIcons.house_fill),
               label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(CupertinoIcons.search),
-              label: 'Search',
             ),
             NavigationDestination(
               icon: Icon(CupertinoIcons.plus_square_fill_on_square_fill),

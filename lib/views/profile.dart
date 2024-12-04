@@ -1,25 +1,25 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:khuje_pai/authentication/login.dart';
 import 'package:khuje_pai/controller/profile_controller.dart';
+import 'package:khuje_pai/user_model.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
-
+  const ProfilePage({super.key, required this.profileUser});
+  final UserModel? profileUser;
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
+    UserModel? user = widget.profileUser;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -45,7 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       StreamBuilder(
                         stream: FirebaseFirestore.instance
                             .collection("User")
-                            .where("id", isEqualTo: user?.uid)
+                            .where("id", isEqualTo: user?.id)
                             .snapshots(),
                         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -295,7 +295,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           width: MediaQuery.of(context).size.width*0.4,
                                           padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 30),
                                           decoration: BoxDecoration(
-                                              color: Color(0xffcd040a),
+                                              color: const Color(0xffcd040a),
                                               borderRadius: BorderRadius.circular(30)
                                           ),
                                           child: const Center(

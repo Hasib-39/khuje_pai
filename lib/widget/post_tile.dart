@@ -1,6 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:khuje_pai/components/post.dart';
+import 'package:khuje_pai/user_model.dart';
+import 'package:khuje_pai/views/profile.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostTile extends StatefulWidget {
   const PostTile({super.key, required this.post});
@@ -23,7 +28,7 @@ class _PostTileState extends State<PostTile> {
     likeCount = widget.post.likeCnt;
   }
 
-  Future<void> fetchUserData() async {
+  Future<UserModel?> fetchUserData() async {
     try {
       // Query User collection where userId matches
       QuerySnapshot userSnapshot = await FirebaseFirestore.instance
@@ -33,14 +38,12 @@ class _PostTileState extends State<PostTile> {
 
       if (userSnapshot.docs.isNotEmpty) {
         var userDoc = userSnapshot.docs.first.data() as Map<String, dynamic>;
-        setState(() {
-          userName = userDoc["name"];
-          userImgUrl = userDoc["imgUrl"];
-        });
+        return UserModel.fromJson(userDoc);
       }
     } catch (e) {
-      print("Error fetching user data: $e");
+      return null;
     }
+    return null;
   }
 
   Future<void> toggleLike() async {
@@ -69,112 +72,164 @@ class _PostTileState extends State<PostTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Display user info (image and name)
-            Row(
+    return FutureBuilder<UserModel?>(
+      future: fetchUserData(), // Fetch user data asynchronously
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Show loading indicator while data is being fetched
+          return const Center(child: Text(""));
+        }
+
+        if (snapshot.hasError) {
+          return const Center(child: Text("Error loading user data"));
+        }
+
+        if (!snapshot.hasData) {
+          return const Center(child: Text("User data not found"));
+        }
+
+        // User data has been fetched, use the data to display UI
+        UserModel user = snapshot.data!;
+
+        return Card(
+          elevation: 5,
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: userImgUrl != null
-                      ? NetworkImage(userImgUrl!)
-                      : const AssetImage("images/default_profile.png") as ImageProvider,
-                  backgroundColor: Colors.grey.shade300,
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  userName ?? "Loading...",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // Display post caption
-            Text(
-              widget.post.caption,
-              style: const TextStyle(fontSize: 14),
-            ),
-            const SizedBox(height: 10),
-            // Display post image
-            widget.post.imgUrl.isNotEmpty
-                ? Image.network(
-              widget.post.imgUrl,
-              width: double.infinity,
-              height: 200,
-              fit: BoxFit.cover,
-            )
-                : const SizedBox.shrink(),
-            const SizedBox(height: 10),
-            // Display post stats with icons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: toggleLike,
-                  child: Row(
-                    children: [
-                      Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: Colors.red,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        "$likeCount",
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                ),
+                // Display user info (image and name)
                 Row(
                   children: [
-                    const Icon(Icons.comment, color: Colors.green, size: 20),
-                    const SizedBox(width: 5),
-                    Text(
-                      "${widget.post.commentCnt}",
-                      style: const TextStyle(fontSize: 14),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigate to the ProfilePage when image is clicked
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(profileUser: user),
+                          ),
+                        );
+                      },
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundImage: user.imgUrl != null
+                            ? NetworkImage(user.imgUrl!)
+                            : const AssetImage("images/default_profile.png") as ImageProvider,
+                        backgroundColor: Colors.grey.shade300,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () {
+                        // Navigate to the ProfilePage when name is clicked
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(profileUser: user),
+                          ),
+                        );
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            user.name ?? "Loading...",
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            "${widget.post.location} . ${timeago.format(widget.post.createdAt.toDate().toLocal())}",
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                          ),
+
+                        ],
+                      ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.post.caption,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                widget.post.imgUrl.isNotEmpty
+                    ? Image.network(
+                  widget.post.imgUrl,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                )
+                    : const SizedBox.shrink(),
+                const SizedBox(height: 10),
+                // Display post stats with icons
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.share, color: Colors.orange, size: 20),
-                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: toggleLike,
+                      child: Row(
+                        children: [
+                          Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: Colors.red,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            "$likeCount",
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const Icon(FontAwesomeIcons.solidComment, color: Colors.black, size: 20),
+                        const SizedBox(width: 5),
+                        Text(
+                          "${widget.post.commentCnt}",
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        const Icon(Icons.share, color: Colors.orange, size: 20),
+                        const SizedBox(width: 5),
+                        Text(
+                          "${widget.post.shareCnt}",
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Display post location and timestamp
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                     Text(
-                      "${widget.post.shareCnt}",
-                      style: const TextStyle(fontSize: 14),
+                      timeago.format(widget.post.createdAt.toDate().toLocal()),
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            // Display post location and timestamp
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.post.location,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                Text(
-                  widget.post.createdAt.toDate().toLocal().toString().split(' ')[0],
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
