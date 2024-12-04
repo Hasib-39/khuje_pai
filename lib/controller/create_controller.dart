@@ -16,6 +16,14 @@ class CreateController with ChangeNotifier {
   File? _image;
   File? get image => _image;
   String imageURL = "";
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+
+  void setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 
   // Method to download image from URL and set it to _image
   Future<void> setImageFromUrl(String url) async {
@@ -23,13 +31,11 @@ class CreateController with ChangeNotifier {
       final response = await http.get(Uri.parse(url));
 
       if (response.statusCode == 200) {
-        // Save image to local file
         final directory = await getTemporaryDirectory();
         final filePath = '${directory.path}/image.jpg';
         final file = File(filePath);
         await file.writeAsBytes(response.bodyBytes);
 
-        // Set _image to the downloaded file
         _image = file;
         imageURL = url;
         notifyListeners();
@@ -41,68 +47,65 @@ class CreateController with ChangeNotifier {
     }
   }
 
-  Future pickGalleryImage(BuildContext context) async {
+  Future<void> pickGalleryImage(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery, imageQuality: 100);
 
     if (pickedFile != null) {
       _image = File(pickedFile.path);
-      // Upload or process image as needed
-      // uploadImage(_image!);
       notifyListeners();
     }
   }
 
-  Future pickCameraImage(BuildContext context) async {
+  Future<void> pickCameraImage(BuildContext context) async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera, imageQuality: 100);
 
     if (pickedFile != null) {
       _image = File(pickedFile.path);
-      // Upload or process image as needed
-      // uploadImage(_image!);
       notifyListeners();
     }
   }
 
-  void pickImage(context) {
+  void pickImage(BuildContext context) {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Container(
-              height: 200,
-              child: Column(
-                children: [
-                  ListTile(
-                    onTap: () {
-                      pickCameraImage(context);
-                      Navigator.pop(context);
-                    },
-                    leading: Icon(Icons.camera, color: Colors.black),
-                    title: Text("Camera"),
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            height: 200,
+            child: Column(
+              children: [
+                ListTile(
+                  onTap: () {
+                    pickCameraImage(context);
+                    Navigator.pop(context);
+                  },
+                  leading: const Icon(Icons.camera, color: Colors.black),
+                  title: const Text("Camera"),
+                ),
+                ListTile(
+                  onTap: () {
+                    pickGalleryImage(context);
+                    Navigator.pop(context);
+                  },
+                  leading: const Icon(Icons.photo_library, color: Colors.black),
+                  title: const Text("Gallery"),
+                ),
+                ListTile(
+                  onTap: () {
+                    _showURLInputDialog(context);
+                  },
+                  leading: const Icon(Icons.link, color: Colors.black),
+                  title: const Text("Image URL"),
+                  subtitle: Text(
+                    imageURL.isNotEmpty ? "Link added" : "No URL provided",
+                    style: const TextStyle(color: Colors.grey),
                   ),
-                  ListTile(
-                    onTap: () {
-                      pickGalleryImage(context);
-                      Navigator.pop(context);
-                    },
-                    leading: Icon(Icons.photo_library, color: Colors.black),
-                    title: Text("Gallery"),
-                  ),
-                  ListTile(
-                    onTap: () {
-                      _showURLInputDialog(context);
-                    },
-                    leading: Icon(Icons.link, color: Colors.black),
-                    title: Text("Image URL"),
-                    subtitle: Text(imageURL.isNotEmpty ? "Link added" : "No URL provided",
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  )
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        }
+          ),
+        );
+      },
     );
   }
 
@@ -124,16 +127,15 @@ class CreateController with ChangeNotifier {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close dialog without saving
+                Navigator.pop(context);
               },
               child: const Text("Cancel"),
             ),
             TextButton(
               onPressed: () {
                 imageURL = urlController.text;
-                // Call method to set image from URL
                 setImageFromUrl(imageURL);
-                Navigator.pop(context); // Close dialog
+                Navigator.pop(context);
               },
               child: const Text("Save"),
             ),
@@ -144,15 +146,16 @@ class CreateController with ChangeNotifier {
   }
 
   Future<void> addPost(String userID) async {
-    if (caption == null || location == null || imageURL == "") {
+    if (caption == null || location == null || imageURL.isEmpty) {
       throw Exception("All fields are required");
     }
 
+    setLoading(true);
     try {
       String postId = FirebaseFirestore.instance.collection("Post").doc().id;
 
       await FirebaseFirestore.instance.collection("Post").doc(postId).set({
-        'id': postId, // Add the unique ID to the document
+        'id': postId,
         'user_id': userID,
         'like_cnt': 0,
         'comment_cnt': 0,
@@ -162,43 +165,47 @@ class CreateController with ChangeNotifier {
         'imgUrl': imageURL,
         'createdAt': FieldValue.serverTimestamp(),
       });
-      notifyListeners();
     } catch (e) {
       print("Error adding post: $e");
       throw e;
+    } finally {
+      setLoading(false);
     }
   }
 
   Future<void> uploadImage(File image) async {
-    File? file = image;
-    String cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
-    var uri = Uri.parse("https://api.cloudinary.com/v1_1/$cloudName/raw/upload");
-    var request = http.MultipartRequest("POST", uri);
-    var fileBytes = await file.readAsBytes();
-    var multipartFile = http.MultipartFile.fromBytes(
-      'file',
-      fileBytes,
-      filename: file.path.split("/").last,
-    );
+    setLoading(true);
+    try {
+      String cloudName = dotenv.env['CLOUDINARY_CLOUD_NAME'] ?? '';
+      var uri = Uri.parse("https://api.cloudinary.com/v1_1/$cloudName/raw/upload");
+      var request = http.MultipartRequest("POST", uri);
+      var fileBytes = await image.readAsBytes();
+      var multipartFile = http.MultipartFile.fromBytes(
+        'file',
+        fileBytes,
+        filename: image.path.split("/").last,
+      );
 
-    request.files.add(multipartFile);
-    request.fields['upload_preset'] = "preset-for-post-img-upload";
-    request.fields['resource_type'] = "raw";
-    var response = await request.send();
+      request.files.add(multipartFile);
+      request.fields['upload_preset'] = "preset-for-post-img-upload";
+      request.fields['resource_type'] = "raw";
+      var response = await request.send();
 
-    var responseBody = await response.stream.bytesToString();
-    print(responseBody);
-    var jsonResponse = jsonDecode(responseBody);
-    String imgUrl = jsonResponse["secure_url"];
+      var responseBody = await response.stream.bytesToString();
+      var jsonResponse = jsonDecode(responseBody);
+      String imgUrl = jsonResponse["secure_url"];
 
-    if (response.statusCode == 200) {
-      print("Uploaded successfully");
-      imageURL = imgUrl;
-      // changeData(imgUrl, "imgUrl");
-      return;
-    } else {
-      print("Upload failed with status: ${response.statusCode}");
-      return;
+      if (response.statusCode == 200) {
+        print("Uploaded successfully");
+        imageURL = imgUrl;
+      } else {
+        print("Upload failed with status: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error uploading image: $e");
+      throw e;
+    } finally {
+      setLoading(false);
     }
   }
 }

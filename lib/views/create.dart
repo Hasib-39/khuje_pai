@@ -29,13 +29,22 @@ class CreatePage extends StatelessWidget {
           actions: [
             Consumer<CreateController>(
               builder: (context, provider, child) {
-                return IconButton(
+                return provider.isLoading
+                    ? const Padding(
+                  padding:  EdgeInsets.all(12.0),
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xffff9d14)),
+                  ),
+                )
+                    : IconButton(
                   onPressed: () async {
                     try {
                       final userId = FirebaseAuth.instance.currentUser?.uid;
                       if (userId != null || provider.image == null) {
+                        provider.setLoading(true); // Set loading to true
                         await provider.uploadImage(provider.image!);
                         await provider.addPost(userId!);
+                        provider.setLoading(false); // Set loading to false
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Post added successfully!")),
                         );
@@ -43,17 +52,19 @@ class CreatePage extends StatelessWidget {
                         throw Exception("User not authenticated.");
                       }
                     } catch (e) {
+                      provider.setLoading(false); // Set loading to false
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Failed to add post: $e")),
                       );
                     }
                   },
-                  icon: const Icon(Icons.send, size: 30, color: Color(0xffff9d14)), // Use your desired icon
+                  icon: const Icon(Icons.send, size: 30, color: Color(0xffff9d14)),
                 );
               },
             ),
           ],
         ),
+
         floatingActionButton: Consumer<CreateController>(
           builder: (context, provider, child) {
             return Padding(
