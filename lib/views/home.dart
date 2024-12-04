@@ -12,6 +12,15 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,18 +30,44 @@ class _HomeState extends State<Home> {
         title: Text(
           'Home',
           style: GoogleFonts.poppins(
-            fontSize: 25, // Set the font size
-            fontWeight: FontWeight.bold, // Set the font weight
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(50.0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.trim().toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search posts by caption...',
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 10),
+              ),
+            ),
           ),
         ),
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance.collection("Post").snapshots(),
+        stream: FirebaseFirestore.instance
+            .collection("Post")
+            .orderBy("createdAt", descending: true)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -45,22 +80,35 @@ class _HomeState extends State<Home> {
           }
 
           if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-            // Use a ListView.builder to ensure all posts are scrollable
-            return ListView.builder(
-              physics: const BouncingScrollPhysics(), // Adds smooth scrolling
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                // Parse the post data into a Post object
-                Post post = Post.fromJson(snapshot.data!.docs[index].data() as Map<String, dynamic>);
-                return PostTile(post: post); // Use PostTile to display the post
-              },
-            );
+            // Filter posts containing the search query as a substring
+            final filteredPosts = snapshot.data!.docs.where((doc) {
+              final caption = (doc['caption'] as String).toLowerCase();
+              return caption.contains(_searchQuery);
+            }).toList();
+
+            if (filteredPosts.isNotEmpty) {
+              return ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                itemCount: filteredPosts.length,
+                itemBuilder: (context, index) {
+                  final postData = filteredPosts[index].data() as Map<String, dynamic>;
+                  Post post = Post.fromJson(postData);
+                  return PostTile(post: post);
+                },
+              );
+            } else {
+              return const Center(
+                child: Text(
+                  "No posts found!",
+                  style: TextStyle(fontSize: 18, color: Colors.grey),
+                ),
+              );
+            }
           }
 
-          // If no posts are available
           return const Center(
             child: Text(
-              "No posts found!",
+              "No posts available!",
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
           );
