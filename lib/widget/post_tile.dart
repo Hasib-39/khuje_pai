@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../components/post.dart';
 import '../user_model.dart';
 import '../views/profile.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class PostTile extends StatefulWidget {
   const PostTile({super.key, required this.post, this.delete_option = false});
@@ -224,39 +229,94 @@ class _PostTileState extends State<PostTile> {
                           Icon(
                             isLiked ? Icons.favorite : Icons.favorite_border,
                             color: Colors.red,
-                            size: 20,
+                            size: 22, // Slightly larger for better visual impact
                           ),
-                          const SizedBox(width: 5),
+                          const SizedBox(width: 8), // Consistent spacing
                           Text(
                             "$likeCount",
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(
+                              fontSize: 16, // Slightly larger text for clarity
+                              fontWeight: FontWeight.w500, // Slightly bold for emphasis
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Row(
                       children: [
-                        const Icon(FontAwesomeIcons.solidComment,
-                            color: Colors.black, size: 20),
-                        const SizedBox(width: 5),
+                        const Icon(
+                          FontAwesomeIcons.comment,
+                          color: Color(0xFF2196F3),
+                          size: 22, // Slightly larger for consistency
+                        ),
+                        const SizedBox(width: 8), // Consistent spacing
                         Text(
                           "${widget.post.commentCnt}",
-                          style: const TextStyle(fontSize: 14),
+                          style: const TextStyle(
+                            fontSize: 16, // Slightly larger text for clarity
+                            fontWeight: FontWeight.w500, // Slightly bold for emphasis
+                          ),
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        const Icon(Icons.share, color: Colors.orange, size: 20),
-                        const SizedBox(width: 5),
-                        Text(
-                          "${widget.post.shareCnt}",
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ],
+                    GestureDetector(
+                      onTap: () async {
+                        try {
+                          final imgUrl = widget.post.imgUrl;
+                          final url = Uri.parse(imgUrl);
+
+                          // Get the image as bytes
+                          final response = await http.get(url);
+                          if (response.statusCode == 200) {
+                            final bytes = response.bodyBytes;
+
+                            // Get the temporary directory
+                            final temp = await getTemporaryDirectory();
+                            final path = '${temp.path}/image.jpg';
+
+                            // Save the image file
+                            final file = File(path);
+                            await file.writeAsBytes(bytes);
+
+                            // Share the image file with caption
+                            await Share.shareXFiles([XFile(path)], text: widget.post.caption);
+                          } else {
+                            // Handle error if image is not found or failed to load
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Failed to download the image")),
+                            );
+                          }
+                        } catch (e) {
+                          // Handle any other errors
+                          print('$e');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Error occurred: $e")),
+                          );
+                        }
+
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.ios_share,
+                            color: Colors.blueAccent,
+                            size: 22, // Slightly larger for consistency
+                          ),
+                          const SizedBox(width: 8), // Consistent spacing
+                          Text(
+                            "${widget.post.shareCnt}",
+                            style: const TextStyle(
+                              fontSize: 16, // Slightly larger text for clarity
+                              fontWeight: FontWeight.w500, // Slightly bold for emphasis
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+
                   ],
-                ),
+                )
+
               ],
             ),
           ),
