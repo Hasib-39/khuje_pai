@@ -293,7 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         },
                                         child: Container(
                                           width: MediaQuery.of(context).size.width*0.4,
-                                          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 30),
+                                          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 13),
                                           decoration: BoxDecoration(
                                               color: const Color(0xffcd040a),
                                               borderRadius: BorderRadius.circular(30)
