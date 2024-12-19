@@ -1,11 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:khuje_pai/user_model.dart';
-import 'package:khuje_pai/views/home.dart';
-import 'package:khuje_pai/authentication/database.dart';
 
 import '../components/app.dart';
 
@@ -75,7 +72,7 @@ class AuthMethods {
         }
       }
     } catch (e) {
-      print("Error during Google Sign-In: $e");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error during Google Sign-In: $e")));
       // Show error message to the user if needed
     }
   }

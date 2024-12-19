@@ -13,9 +13,9 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class PostTile extends StatefulWidget {
-  const PostTile({super.key, required this.post, this.delete_option = false});
+  const PostTile({super.key, required this.post, this.deleteOption = false});
   final Post post;
-  final bool delete_option;
+  final bool deleteOption;
 
   @override
   State<PostTile> createState() => _PostTileState();
@@ -171,7 +171,7 @@ class _PostTileState extends State<PostTile> {
                         ),
                       ],
                     ),
-                    if (widget.delete_option)
+                    if (widget.deleteOption)
                       IconButton(
                         icon: const Icon(Icons.more_vert),
                         onPressed: () {
@@ -288,7 +288,6 @@ class _PostTileState extends State<PostTile> {
                           }
                         } catch (e) {
                           // Handle any other errors
-                          print('$e');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("Error occurred: $e")),
                           );

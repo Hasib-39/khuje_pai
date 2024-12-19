@@ -120,201 +120,199 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: Image.asset(
-                  "images/lost_and_found.png",
-                  fit: BoxFit.cover,
-                  height: MediaQuery.of(context).size.height * 0.35,
-                ),
+        child: Column(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Image.asset(
+                "images/lost_and_found.png",
+                fit: BoxFit.cover,
+                height: MediaQuery.of(context).size.height * 0.35,
               ),
-              const SizedBox(height: 30,),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Form(
-                  key: _formkey,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 30),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)
-                        ),
-                        child: TextFormField(
-                          controller: namecontroller,
-                          validator: (value){
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter Name';
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Name",
-                              hintStyle: TextStyle(
-                                  color: Color(0xffb2b7bf),
-                                  fontSize: 18,
-                                  fontFamily: 'Inter'
-                              )
-                          ),
-                        ),
+            ),
+            const SizedBox(height: 30,),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Form(
+                key: _formkey,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 30),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30)
                       ),
-                      const SizedBox(height: 30,),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 30),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)
-                        ),
-                        child: TextFormField(
-                          controller: mailcontroller,
-                          validator: (value){
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter Email';
-                            }
-                            return null;
-                          },
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Email",
-                              hintStyle: TextStyle(
-                                  color: Color(0xffb2b7bf),
-                                  fontSize: 18,
-                                  fontFamily: 'Inter'
-                              )
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 30,),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 30),
-                        decoration: BoxDecoration(
-                            color: const Color(0xFFedf0f8),
-                            borderRadius: BorderRadius.circular(30)
-                        ),
-                        child: TextFormField(
-                          validator: (value){
-                            if (value == null || value.isEmpty) {
-                              return 'Please Enter Password';
-                            }
-                            return null;
-                          },
-                          controller: passwordcontroller,
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Password",
-                              hintStyle: TextStyle(
-                                  color: Color(0xffb2b7bf),
-                                  fontSize: 18,
-                                  fontFamily: 'Inter'
-                              )
-                          ),
-                          obscureText: true,
-                        ),
-                      ),
-                      const SizedBox(height: 30,),
-                      GestureDetector(
-                        onTap: (){
-                          if(_formkey.currentState!.validate()){
-                            setState(() {
-                              email = mailcontroller.text;
-                              name = namecontroller.text;
-                              password = passwordcontroller.text;
-                            });
+                      child: TextFormField(
+                        controller: namecontroller,
+                        validator: (value){
+                          if (value == null || value.isEmpty) {
+                            return 'Please Enter Name';
                           }
-                          registration();
+                          return null;
                         },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 30),
-                          decoration: BoxDecoration(
-                              color: const Color(0xffff9d14),
-                              borderRadius: BorderRadius.circular(30)
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: 'Inter'
-                              ),
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Name",
+                            hintStyle: TextStyle(
+                                color: Color(0xffb2b7bf),
+                                fontSize: 18,
+                                fontFamily: 'Inter'
+                            )
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30,),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 30),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30)
+                      ),
+                      child: TextFormField(
+                        controller: mailcontroller,
+                        validator: (value){
+                          if (value == null || value.isEmpty) {
+                            return 'Please Enter Email';
+                          }
+                          return null;
+                        },
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Email",
+                            hintStyle: TextStyle(
+                                color: Color(0xffb2b7bf),
+                                fontSize: 18,
+                                fontFamily: 'Inter'
+                            )
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 30,),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 30),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFedf0f8),
+                          borderRadius: BorderRadius.circular(30)
+                      ),
+                      child: TextFormField(
+                        validator: (value){
+                          if (value == null || value.isEmpty) {
+                            return 'Please Enter Password';
+                          }
+                          return null;
+                        },
+                        controller: passwordcontroller,
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Password",
+                            hintStyle: TextStyle(
+                                color: Color(0xffb2b7bf),
+                                fontSize: 18,
+                                fontFamily: 'Inter'
+                            )
+                        ),
+                        obscureText: true,
+                      ),
+                    ),
+                    const SizedBox(height: 30,),
+                    GestureDetector(
+                      onTap: (){
+                        if(_formkey.currentState!.validate()){
+                          setState(() {
+                            email = mailcontroller.text;
+                            name = namecontroller.text;
+                            password = passwordcontroller.text;
+                          });
+                        }
+                        registration();
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 30),
+                        decoration: BoxDecoration(
+                            color: const Color(0xffff9d14),
+                            borderRadius: BorderRadius.circular(30)
+                        ),
+                        child: const Center(
+                          child: Text(
+                            "Sign Up",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: 'Inter'
                             ),
                           ),
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    )
+                  ],
                 ),
               ),
-              const SizedBox(height: 35,),
-              const Text(
-                "or Login with",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Inter'
+            ),
+            const SizedBox(height: 35,),
+            const Text(
+              "or Login with",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Inter'
+              ),
+            ),
+            const SizedBox(height: 35,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "images/google.png",
+                  width: 45,
+                  height: 45,
+                  fit: BoxFit.cover,
                 ),
-              ),
-              const SizedBox(height: 35,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "images/google.png",
-                    width: 45,
-                    height: 45,
-                    fit: BoxFit.cover,
+                // const SizedBox(width: 30,),
+                // Image.asset(
+                //   "images/apple.png",
+                //   width: 50,
+                //   height: 50,
+                //   fit: BoxFit.cover,
+                // )
+              ],
+            ),
+            const SizedBox(height: 35,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Already have an account? ",
+                  style: TextStyle(
+                      color: Color(0xff8c8e98),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Inter'
                   ),
-                  // const SizedBox(width: 30,),
-                  // Image.asset(
-                  //   "images/apple.png",
-                  //   width: 50,
-                  //   height: 50,
-                  //   fit: BoxFit.cover,
-                  // )
-                ],
-              ),
-              const SizedBox(height: 35,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Already have an account? ",
+                ),
+                const SizedBox(width: 5,),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => const Login())
+                    );
+                  },
+                  child: const Text(
+                    "Login",
                     style: TextStyle(
-                        color: Color(0xff8c8e98),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
                         fontFamily: 'Inter'
                     ),
                   ),
-                  const SizedBox(width: 5,),
-                  GestureDetector(
-                    onTap: (){
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const Login())
-                      );
-                    },
-                    child: const Text(
-                      "Login",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Inter'
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
+                )
+              ],
+            )
+          ],
         ),
       ),
     );

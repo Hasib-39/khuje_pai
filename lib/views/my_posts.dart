@@ -83,7 +83,6 @@ class _MyPostsPageState extends State<MyPostsPage> {
           }
 
           if (snapshot.hasError) {
-            print(snapshot.error);
             return const Center(
               child: Text(
                 "Error loading posts!",
@@ -106,7 +105,7 @@ class _MyPostsPageState extends State<MyPostsPage> {
                 itemBuilder: (context, index) {
                   final postData = filteredPosts[index].data() as Map<String, dynamic>;
                   Post post = Post.fromJson(postData);
-                  return PostTile(post: post, delete_option: true,);
+                  return PostTile(post: post, deleteOption: true,);
                 },
               );
             } else {

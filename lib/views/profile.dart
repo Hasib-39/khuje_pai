@@ -134,6 +134,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
+                                          flex: 3,
                                           child: Text(
                                               "Name",
                                             style: GoogleFonts.inter(
@@ -142,9 +143,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.grey.shade500
                                             ),
                                           ),
-                                        flex: 3,
+
                                       ),
                                       Expanded(
+                                        flex: 8,
                                         child: Text(
                                       userDoc['name'] ?? 'N/A',
                                           style: GoogleFonts.inter(
@@ -153,7 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.black
                                           ),
                                         ),
-                                        flex: 8,
+
                                       ),
                                       Expanded(
                                           child: GestureDetector(
@@ -172,6 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Row(
                                     children: [
                                       Expanded(
+                                        flex: 3,
                                         child: Text(
                                           "Email",
                                           style: GoogleFonts.inter(
@@ -180,9 +183,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.grey.shade500
                                           ),
                                         ),
-                                        flex: 3,
+
                                       ),
                                       Expanded(
+                                        flex: 8,
                                         child: Text(
                                           userDoc['email'] ?? 'N/A',
                                           style: GoogleFonts.inter(
@@ -191,7 +195,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.black
                                           ),
                                         ),
-                                        flex: 8,
+
                                       ),
                                       Expanded(
                                           child: Icon(
@@ -205,6 +209,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Row(
                                     children: [
                                       Expanded(
+                                        flex: 3,
                                         child: Text(
                                           "Phone",
                                           style: GoogleFonts.inter(
@@ -213,9 +218,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.grey.shade500
                                           ),
                                         ),
-                                        flex: 3,
+
                                       ),
                                       Expanded(
+                                        flex: 8,
                                         child: Text(
                                           userDoc['phone'] ?? 'N/A',
                                           style: GoogleFonts.inter(
@@ -224,7 +230,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.black
                                           ),
                                         ),
-                                        flex: 8,
+
                                       ),
                                       Expanded(
                                           child: GestureDetector(
@@ -243,6 +249,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Row(
                                     children: [
                                       Expanded(
+                                        flex: 3,
                                         child: Text(
                                           "Description",
                                           style: GoogleFonts.inter(
@@ -251,9 +258,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.grey.shade500
                                           ),
                                         ),
-                                        flex: 3,
+
                                       ),
                                       Expanded(
+                                          flex: -1,
                                           child: GestureDetector(
                                             onTap: (){
                                               provider.showDescriptionDialog(context);
@@ -263,7 +271,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.grey.shade400,
                                             ),
                                           ),
-                                        flex: -1,
+
                                       )
                                     ],
                                   ),
@@ -271,6 +279,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Row(
                                     children: [
                                       Expanded(
+                                        flex: 8,
                                         child: Text(
                                           userDoc['description'] ?? 'N/A',
                                           style: GoogleFonts.inter(
@@ -279,7 +288,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               color: Colors.black
                                           ),
                                         ),
-                                        flex: 8,
+
                                       ),
                                     ],
                                   ),
